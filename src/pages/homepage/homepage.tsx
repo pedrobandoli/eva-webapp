@@ -1,7 +1,8 @@
 import './homepage.css';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import React, { Component, useEffect, useState } from 'react';
-import gerarQuiz from '../../api/gerarQuiz';
+import axios from 'axios';
+import { downloadFile } from '../../utils/b64decoder';
 
 function Header(): any {
     return <header>
@@ -92,10 +93,10 @@ function Body() {
     const [state, setState] = useState<
         { tema?: 'historia'| 'geografia' | 'quimica' | 'fisica',
           nivel?: 'fundamental' | 'medio',
-          quantidade?: number}>({
+          quantidade: number | null}>({
         tema: undefined,
         nivel: undefined,
-        quantidade: undefined,
+        quantidade: null,
     })
 
     const [quiz, setQuiz] = useState(false);
@@ -106,7 +107,7 @@ function Body() {
     
         if (/^[1-9]\d*$/.test(inputValue)) {
             setState({...state, quantidade: parseInt(event.target.value)})
-        } else if (!inputValue) setState({...state, quantidade: undefined})
+        } else if (!inputValue) setState({...state, quantidade: null})
     }
 
     return <div className='container'>
@@ -132,15 +133,43 @@ function Body() {
                     <option value='médio'> Médio </option>
                 </select>
                 <input placeholder='Insira o número de perguntas'
-                    value={state.quantidade}
+                    value={state.quantidade || ''}
                     onChange={(e) => handleAmountChange(e)}/>
             </div>
             <button onClick={() => setQuiz(true)} disabled={!state.quantidade}>
                 Gerar Quiz
             </button>
+           <FileUpload/>
         </div>: <Quiz quantidade={state.quantidade}/>}
     </div>
 }
+
+function FileUpload(){
+
+    const [file, setFile] = useState();
+    const [correctType, setCorrectType] = useState(false);
+
+    const uploadFile = async () => {
+
+        const formData = new FormData();
+        formData.append('file', file as unknown as Blob, (file as any).name)
+        const { data } = await axios.post('/api/create-xml', formData);
+        downloadFile('application/xml', data, (file as any).name)
+    }
+
+    const handleChangeFile = (event: any) => {
+        const file = event.target.files[0];
+        setFile(file)
+        setCorrectType((file as any).name.split('.')[1] === 'xml')
+    }
+
+    return <div>
+            <input type='file' onChange={(e) => handleChangeFile(e)}/>
+            <button onClick={() => uploadFile()} disabled={!correctType}> XML -{'>'} EVAML </button>
+        </div>
+
+}
+
 
 export default function Homepage(): any {
     return (<div> 
