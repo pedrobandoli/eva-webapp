@@ -3,6 +3,7 @@ import { ReactComponent as Logo } from '../../assets/logo.svg';
 import React, { Component, useEffect, useState } from 'react';
 import axios from 'axios';
 import { downloadFile } from '../../utils/b64decoder';
+import { createQuizXML } from '../../utils/quizTemplate';
 
 function Header(): any {
     return <header>
@@ -36,6 +37,15 @@ function Quiz({ quantidade }: any) {
         const [newAnswer, setNewAnswer] = useState();
         const [newQuestion, setNewQuestion] = useState();
 
+        const downloadXml = async () => {
+            const { questionario } = state;
+            const xml = createQuizXML(questionario);
+            const { data } = await axios.post('/api/create-xml', xml, {
+                headers: { 'Content-Type': 'application/xml' },
+              });
+            downloadFile('application/xml', data, 'generated_quiz.xml')
+        }
+
         return <div className='main-questionary-display'>
             <div className='questionary-display'>{
             Object.entries(state.questionario).map(([idPergunta, qa], index) => {
@@ -65,7 +75,7 @@ function Quiz({ quantidade }: any) {
             })
         })}
         </div>
-        <button>Gerar script EvaML</button>
+        <button onClick={() => downloadXml()}>Gerar script EvaML</button>
         </div>
     }
 

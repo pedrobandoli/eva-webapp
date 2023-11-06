@@ -10,8 +10,12 @@ app = Flask(__name__)
 @app.route('/api/create-xml', methods=['POST'])
 def create_xml_script():
     data = request.get_data()
-    xml = re.search(r'Content-Type: text/xml\r\n\r\n(.*?)\r\n--', data.decode('utf-8', 'ignore'), re.DOTALL)
-    tree = ET.ElementTree(ET.fromstring(xml.group(1)))
+    if request.mimetype == 'application/xml':
+        tree = ET.ElementTree(ET.fromstring(data))
+    else:
+        xml = re.search(r'Content-Type: text/xml\r\n\r\n(.*?)\r\n--', data.decode('utf-8', 'ignore'), re.DOTALL)
+        tree = ET.ElementTree(ET.fromstring(xml.group(1)))
+    
     MacroExpander.run(tree)
     GenerateKeys.run(tree)
     GenerateLinks.run(tree)
