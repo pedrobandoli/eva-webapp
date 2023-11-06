@@ -149,18 +149,19 @@ function Body() {
             <button onClick={() => setQuiz(true)} disabled={!state.quantidade}>
                 Gerar Quiz
             </button>
-           <FileUpload/>
+           <FileUpload type='xml'/>
+           <FileUpload type='json'/>
         </div>: <Quiz quantidade={state.quantidade}/>}
     </div>
 }
 
-function FileUpload(){
+function FileUpload({type}: {type: 'xml'|'json'}){
 
     const [file, setFile] = useState();
     const [correctType, setCorrectType] = useState(false);
 
     const uploadFile = async () => {
-
+        
         const formData = new FormData();
         formData.append('file', file as unknown as Blob, (file as any).name)
         const { data } = await axios.post('/api/create-xml', formData);
@@ -170,12 +171,12 @@ function FileUpload(){
     const handleChangeFile = (event: any) => {
         const file = event.target.files[0];
         setFile(file)
-        setCorrectType((file as any).name.split('.')[1] === 'xml')
+        setCorrectType((file as any).name.split('.')[1] === type)
     }
 
     return <div>
             <input type='file' onChange={(e) => handleChangeFile(e)}/>
-            <button onClick={() => uploadFile()} disabled={!correctType}> XML -{'>'} EVAML </button>
+            <button onClick={() => uploadFile()} disabled={!correctType}> {type.toUpperCase()} -{'>'} EVAML </button>
         </div>
 
 }
