@@ -151,11 +151,12 @@ function Body() {
             </button>
            <FileUpload type='xml'/>
            <FileUpload type='json'/>
+           <FileUpload type='xml' type_to='json'/>
         </div>: <Quiz quantidade={state.quantidade}/>}
     </div>
 }
 
-function FileUpload({type}: {type: 'xml'|'json'}){
+function FileUpload({type, type_to}: {type: 'xml'|'json', type_to?: 'xml' | 'json'}){
 
     const [file, setFile] = useState();
     const [correctType, setCorrectType] = useState(false);
@@ -164,8 +165,10 @@ function FileUpload({type}: {type: 'xml'|'json'}){
         
         const formData = new FormData();
         formData.append('file', file as unknown as Blob, (file as any).name)
-        const { data } = await axios.post('/api/create-xml', formData);
-        downloadFile('application/xml', data, (file as any).name)
+        const url = type_to && type_to === 'json'? '/api/create-json-file': '/api/create-xml';
+        const { data } = await axios.post(url, formData);
+
+        downloadFile(type_to === 'json'? 'application/json': 'application/xml', data, (file as any).name)
     }
 
     const handleChangeFile = (event: any) => {
@@ -176,7 +179,7 @@ function FileUpload({type}: {type: 'xml'|'json'}){
 
     return <div>
             <input type='file' onChange={(e) => handleChangeFile(e)}/>
-            <button onClick={() => uploadFile()} disabled={!correctType}> {type.toUpperCase()} -{'>'} EVAML </button>
+            <button onClick={() => uploadFile()} disabled={!correctType}> {type.toUpperCase()} -{'>'} {type_to?.toUpperCase() || 'EVAML'} </button>
         </div>
 
 }
