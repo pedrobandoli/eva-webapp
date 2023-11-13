@@ -16,17 +16,17 @@ def check_if_evaml(tree):
 @app.route('/api/create-xml', methods=['POST'])
 def create_xml_script():
     data = request.get_data()
-    file = request.files['file']
+    file = request.files.get('file')
     is_json: bool = False
     if request.mimetype == 'application/xml':
         # Client envia uma string contendo um xml válido
         tree = ET.ElementTree(ET.fromstring(data))
     else:
-        if file.content_type == 'text/xml':
+        if file and file.content_type == 'text/xml':
         # Client envia um blob file .xml
             xml = re.search(r'Content-Type: text/xml\r\n\r\n(.*?)\r\n--', data.decode('utf-8', 'ignore'), re.DOTALL)
             tree = ET.ElementTree(ET.fromstring(xml.group(1)))
-        elif file.content_type == 'application/json':
+        elif file and file.content_type == 'application/json':
             json = re.search(r'Content-Type: application/json\r\n\r\n(.*?)\r\n--', data.decode('utf-8', 'ignore'), re.DOTALL)
             tree = ET.ElementTree(convert_json(json.group(1)))
             is_json = True
