@@ -2,7 +2,66 @@ html {
     font-family: 'Sharon Sans';
 }
 
+body {
+    background: linear-gradient(to left, #4990d6, #54a8d3, #3bb2d3, #1e9ec9);
 
+    & #root >div {
+        width: 100vw;
+        height: 100vh;
+    }
+}
+
+@font-face {
+    font-family: 'Roslindale';
+    src: url('../../assets/Roslindale\ Text\ Italic.ttf');
+}
+
+.homepage-body {
+    font-size: 40px;
+    font-weight: bold;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    margin-top: 200px;
+
+    & .opcoes-container {
+
+        align-self: flex-start;
+        justify-content: center;
+
+        & .opcoes {
+            & p {
+                font-size: 30px;
+                font-weight: 500;
+                padding-left: 30px;
+                margin-top: 15px;
+                margin-bottom: 0px;
+                cursor: pointer;
+                color: lightcyan;
+                font-family: 'Roboto', serif;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+
+        }
+
+        & span {
+            color: white;
+            padding: 5px;
+            font-family: 'Roslindale';
+            font-weight: bolder;
+            background-color: rgb(121, 117, 117);
+        }
+
+    }
+
+
+
+}
+
+/* 
 button {
     margin-top: 8px;
     width: inherit !important;
@@ -48,7 +107,6 @@ header {
 div.container {
     background-color: black;
     width: 100%;
-    margin-top: 147px;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -134,4 +192,4 @@ div.container {
     }
 
    
-}
+} */

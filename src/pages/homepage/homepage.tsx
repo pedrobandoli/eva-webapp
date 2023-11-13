@@ -1,14 +1,21 @@
 import './homepage.css';
-import { ReactComponent as Logo } from '../../assets/logo.svg';
+import './header.css';
+import robot from '../../assets/robot.svg';
 import React, { Component, useEffect, useState } from 'react';
 import axios from 'axios';
 import { downloadFile } from '../../utils/b64decoder';
 import { createQuizXML } from '../../utils/quizTemplate';
 
 function Header(): any {
-    return <header>
-        <Logo/>
-    </header>
+    return <div className='custom-header'>
+        <div className='logo'>
+            <img src={robot}/>
+            <span> EvaScript</span>
+        </div>
+        <div className='links'>
+            <span>About</span>
+        </div>
+    </div>
 }
 
 
@@ -188,6 +195,15 @@ function FileUpload({type, type_to}: {type: 'xml'|'json', type_to?: 'xml' | 'jso
 export default function Homepage(): any {
     return (<div> 
         <Header/>
-        <Body/>
+        <div className='homepage-body'>
+            <div className='opcoes-container'>
+                <span className='title'> Que tipo de script você deseja gerar? </span>
+                <div className='opcoes'>
+                    <p> Jogo sério (Quiz) </p>
+                    <p> JSON (A partir de um script EvaML) </p>
+                </div>
+            </div>
+
+        </div>
     </div>)
 }

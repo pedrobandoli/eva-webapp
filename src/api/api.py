@@ -2,6 +2,7 @@ import base64
 from flask import Flask, request
 from domain.convert_xml_to_evaml import MacroExpander, GenerateKeys, GenerateLinks
 from domain.convert_json_to_evaml import convert_json
+from domain.create_quiz_from_text import create_quiz
 from domain.convert_xml_to_json import ParserXMLToJSON
 import xml.etree.ElementTree as ET
 import re
@@ -62,3 +63,9 @@ def create_json_script():
     b64 = base64.b64encode(json_string.encode('utf-8')).decode('utf-8')
 
     return b64
+
+
+@app.route('/api/create-quiz-from-text', methods=['POST'])
+def create_quiz_from_text():
+    data = request.get_data()
+    return create_quiz(data.decode('utf-8'))

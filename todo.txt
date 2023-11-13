@@ -1,0 +1,23 @@
+# Requisitos Funcionais
+
+- O usuário deve ser capaz de fornecer um texto e obter um set de perguntas e respostas gerado
+    a partir do texto fornecido. 
+- O usuário deve ser capaz de fornecer o set de perguntas e respostas sem a necessidade um texto de apoio.
+- O usuário deve ser capaz de selecionar se as perguntas no script serão executadas pelo robô Eva
+    de forma aleatória.
+- O usuário deve ser capaz de selecionar se as respostas para as perguntas serão sempre exatas ou se irão ser uma
+    substring da resposta correta.
+- O usuário deve ser capaz de selecionar se as perguntas terão múltiplas respostas possíveis OU apenas uma única resposta
+- O usuário deve ser capaz de gerar um script evaML a partir dessas perguntas e respostas, bem como os extras acima descritos.
+
+Extras:
+    - O usuário deve poder gerar um JSON eva-equivalent a partir do script evaML (a ser utilizado no robô)
+
+
+
+About (EvaScript):  
+    Bem-vindo ao EvaWizard, sua plataforma simplificada para criação de scripts EVAMl.
+    Esta ferramenta tem como objetivo capacitar você a construir scripts de jogos sérios de perguntas e respostas para o SSA EVA de forma simplificada.
+    
+    Personalize seus scripts com facilidade, escolhendo entre respostas únicas, múltiplas, exatas, contidas na resposta pré-definida. Além disso, você pode optar por
+    randomizar as perguntas e respostas druante a execução do script pelo robô ou no simulador EvaSim. (link aqui)

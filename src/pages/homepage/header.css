@@ -1,0 +1,37 @@
+.custom-header {
+    display: flex;
+    height: 130px;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    
+    & span:hover {
+        text-decoration: underline;
+    }
+    
+    & span {
+        cursor: pointer;
+    }
+    
+    & .logo {
+        font-weight: bold;
+        font-family: 'Roboto', sans-serif ;
+        display: flex;
+        align-items: center;
+        
+        & img {
+            width: 200px;
+            height: 120px;
+        }
+    
+        & span {
+            font-size: 60px;
+        }
+    }
+
+    & .links {
+        margin-right: 24px;
+        font-size: x-large;
+    }
+   
+}
