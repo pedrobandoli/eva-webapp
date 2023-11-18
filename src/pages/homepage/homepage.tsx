@@ -133,6 +133,15 @@ function QuizContainer({ visible, handleContainers }: { visible: boolean, handle
                 setEditingQuestion(undefined);
             }
 
+            const handleGenerateScript = async (quizCpy: any) => {
+                const xml: string = createQuizXML(quizCpy)
+                const filename = `quiz_${new Date().getTime()}`
+                const { data } = await axios.post('/api/create-xml', xml, {
+                    headers: { 'Content-Type': 'application/xml' },
+                });
+                downloadFile('application/xml', data, filename)
+            }
+
 
             return <>{Object.entries(quizCpy).map(([id, qa]) => 
                 <div className='qa-container'>
@@ -160,7 +169,7 @@ function QuizContainer({ visible, handleContainers }: { visible: boolean, handle
                 </div>
             )}
             <div className='submit-button'>
-                <button className='primary' onClick={() => console.log(quizCpy)}>
+                <button className='primary' onClick={() => handleGenerateScript(quizCpy)}>
                     Gerar XML!
                 </button>
             </div>
