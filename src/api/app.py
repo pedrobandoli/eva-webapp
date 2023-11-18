@@ -6,6 +6,7 @@ from domain.create_quiz_from_text import create_quiz
 from domain.convert_xml_to_json import ParserXMLToJSON
 import xml.etree.ElementTree as ET
 import re
+import json
 
 
 app = Flask(__name__)
@@ -67,5 +68,7 @@ def create_json_script():
 
 @app.route('/api/create-quiz-from-text', methods=['POST'])
 def create_quiz_from_text():
-    data = request.get_data()
-    return create_quiz(data.decode('utf-8'))
+    data = request.get_json()
+    amount, text = data['amount'], data['text']
+    quiz = create_quiz(text, amount)
+    return json.loads(quiz)

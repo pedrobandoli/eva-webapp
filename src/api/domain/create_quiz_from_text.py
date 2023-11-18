@@ -7,9 +7,15 @@ def create_quiz(text: str, amount: int = 10):
     Não use fontes externas, baseie-se inteiramente no texto. Suponha que você é um professor tendo
     que utilizar um livro-texto como referência pra construir uma prova.
 
+    Não inclua perguntas cujas respostas sejam 'Não especificado' ou similar.
+    As perguntas devem ter respostas de no máximo 2 palavras, como em um show do milhão etc ou o tipo de pergunta
+    que se faz em um teste de múltipla escolha.
+    Caso a resposta seja um intervalo de tempo, como '1947-1991', retorne como '1947 a 1991', ou 'entre 1947 e 1991'.
+
     Ao final do processo, retorne a lista de perguntas e respostas em um json.
-    O json deve ser da seguinte forma, uma chave com 'Pergunta %', onde % é o índice da pergunta, e o valor sendo outro dict sendo
-    a chave a pergunta gerada e o valor a respectiva resposta.
+    O json deve ser da seguinte forma, uma chave com %, onde % é o índice inteiro da pergunta (iniciando em 0),
+    e o valor sendo outro dict sendo a chave a pergunta gerada e o valor a respectiva resposta.
+    
     """.format(amount)
 
 

@@ -60,19 +60,96 @@ function InitialContainer({ handleContainers, visible }: { handleContainers: (ty
 function QuizContainer({ visible, handleContainers }: { visible: boolean, handleContainers: (type: ContainerTypes) => void }) {
 
     const [mode, setMode] = useState<'text' | 'sheet' | 'manual' | undefined>(undefined);
+
+
+    const DisplayQuestions = ({ quiz }: { quiz: any }) => {
+
+        const [quizCpy, setQuizCpy] = useState({ ...quiz });
+        const [editingQuestion, setEditingQuestion] = useState<undefined | number>();
+        const [updatedQA, setUpdatedQA] = useState<{ question: string, answer: string }>({
+            question: '',
+            answer: '',
+        })
+
+        const handleUpdateQuiz = () => {
+            const id = editingQuestion as number;
+            quizCpy[id] = { question: updatedQA.question || quiz[id].question, answer: updatedQA.answer || quiz[id].answer }
+            setUpdatedQA({ question: '', answer: '' })
+            setQuizCpy({ ...quizCpy })
+            setEditingQuestion(undefined);
+        }
+
+        const handleGenerateScript = async (quizCpy: any) => {
+            const xml: string = createQuizXML(quizCpy)
+            const filename = `quiz_${new Date().getTime()}`
+            const { data } = await axios.post('/api/create-xml', xml, {
+                headers: { 'Content-Type': 'application/xml' },
+            });
+            downloadFile('application/xml', data, filename)
+        }
+
+
+        return <>{Object.entries(quizCpy).map(([id, qa]) =>
+            <div className='qa-container'>
+                <span className='qa-id'> Pergunta {id + 1} | <a onClick={() => setEditingQuestion(parseInt(id))}> Alterar</a> </span>
+                <div className='qa-description'>
+                    {!(editingQuestion as number === parseInt(id)) ? (<><span className='question'> {(qa as any).question}</span>
+                        <span className='pre-answer'>
+                            R: <span className='answer'> {(qa as any).answer} </span>
+                        </span></>) : <>
+                        <div className='new-qa'>
+                            <span> Nova pergunta: </span>
+                            <input value={updatedQA?.question} placeholder={(qa as any).question} onChange={(v) => setUpdatedQA({ ...updatedQA, question: v.target.value })} />
+                        </div>
+                        <div className='new-qa'>
+                            <span> Nova resposta: </span>
+                            <input value={updatedQA?.answer} placeholder={(qa as any).answer} onChange={(v) => setUpdatedQA({ ...updatedQA, answer: v.target.value })} />
+                        </div>
+                        <div className='buttons'>
+                            <button className='primary' onClick={handleUpdateQuiz}> Ok </button>
+                            <button className='rollback'> Limpar </button>
+                        </div>
+                    </>
+                    }
+                </div>
+            </div>
+        )}
+            <div className='submit-button'>
+                <button className='primary' onClick={() => handleGenerateScript(quizCpy)}>
+                    Gerar XML!
+                </button>
+            </div>
+        </>
+    }
     
     const TextContainer = () => {
 
         const [text, setText] = useState('')
+        const [quiz, setQuiz] = useState<any>(undefined)
         const maximumSize = 2048;
 
-        return <div className='text-container'>
+        const handleGenerateScript = async () => {
+            const { data } = await axios.post('/api/create-quiz-from-text', {
+                text,
+                amount: 10,
+            }, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+            const transformedObj = Object.entries(data).map(([key, value]) => ({
+                    question: Object.keys(value as any)[0],
+                    answer: Object.values(value as any)[0],
+            }));
+
+            setQuiz(transformedObj);
+        }
+
+        return !quiz ? <div className='text-container'>
             <textarea value={text} onChange={(v) => setText(v.target.value)}/>
             <div>
                 <button className='rollback' onClick={() => setText('')}> Limpar </button>
-                <button className='primary' disabled={text === undefined || text === ''}> Gerar Evaml </button>
+                <button className='primary' disabled={text === undefined || text === ''} onClick={handleGenerateScript}> Gerar Q&A </button>
             </div>
-        </div>
+        </div> : <div className='manual-container'><DisplayQuestions quiz={quiz} /></div>
     }
 
     const SheetContainer = () => {
@@ -115,67 +192,6 @@ function QuizContainer({ visible, handleContainers }: { visible: boolean, handle
                 <button className='primary' onClick={() => setCreatingQuiz(true)}>Confirmar</button>             
             </div>
         }
-
-        const DisplayQuestions = ({ quiz }: { quiz: any}) => {
-
-            const [quizCpy, setQuizCpy] = useState({...quiz});
-            const [editingQuestion, setEditingQuestion] = useState<undefined | number>();
-            const [updatedQA, setUpdatedQA] = useState<{question: string, answer: string}>({
-                question: '',
-                answer: '',
-            })
-
-            const handleUpdateQuiz = () => {
-                const id = editingQuestion as number;
-                quizCpy[id] = {question: updatedQA.question || quiz[id].question, answer: updatedQA.answer || quiz[id].answer}
-                setUpdatedQA({ question: '', answer: ''})
-                setQuizCpy({...quizCpy})
-                setEditingQuestion(undefined);
-            }
-
-            const handleGenerateScript = async (quizCpy: any) => {
-                const xml: string = createQuizXML(quizCpy)
-                const filename = `quiz_${new Date().getTime()}`
-                const { data } = await axios.post('/api/create-xml', xml, {
-                    headers: { 'Content-Type': 'application/xml' },
-                });
-                downloadFile('application/xml', data, filename)
-            }
-
-
-            return <>{Object.entries(quizCpy).map(([id, qa]) => 
-                <div className='qa-container'>
-                    <span className='qa-id'> Pergunta {id + 1} | <a onClick={() => setEditingQuestion(parseInt(id))}> Alterar</a> </span>
-                    <div className='qa-description'>
-                        {!(editingQuestion as number === parseInt(id)) ? (<><span className='question'> {(qa as any).question}</span>
-                        <span className='pre-answer'>
-                            R: <span className='answer'> {(qa as any).answer} </span>
-                            </span></>): <>
-                                <div className='new-qa'>
-                                    <span> Nova pergunta: </span>
-                                    <input value={updatedQA?.question} placeholder={(qa as any).question} onChange={(v) => setUpdatedQA({...updatedQA, question: v.target.value})}/>
-                                </div>
-                                <div className='new-qa'>
-                                    <span> Nova resposta: </span>
-                                    <input value={updatedQA?.answer} placeholder={(qa as any).answer} onChange={(v) => setUpdatedQA({...updatedQA, answer: v.target.value})}/>
-                                </div>
-                                <div className='buttons'>
-                                    <button className='primary' onClick={handleUpdateQuiz}> Ok </button>
-                                    <button className='rollback'> Limpar </button>
-                                </div>
-                            </>
-        }
-                    </div>
-                </div>
-            )}
-            <div className='submit-button'>
-                <button className='primary' onClick={() => handleGenerateScript(quizCpy)}>
-                    Gerar XML!
-                </button>
-            </div>
-            </>
-        }
-
 
         const CreateQuiz = ({ amount }: {amount : number}) => {
             const [tempQuiz, setTempQuiz] = useState<Quiz | {}>({});
