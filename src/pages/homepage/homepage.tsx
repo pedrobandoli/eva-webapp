@@ -25,14 +25,15 @@ interface QA {
 }
 
 
-type ContainerTypes = 'inicial' | 'quiz';
+type ContainerTypes = 'inicial' | 'quiz' | 'jsonGen';
 type Quiz = { idAnswer: QA }
 
 function Container() {
 
     const initialState = {
         inicial: { visible: false},
-        quiz: {visible: false}
+        quiz: {visible: false},
+        jsonGen: { visible: false},
     }
 
     const [containerVisible, setContainerVisible] = useState<any>({...initialState, inicial: { visible: true}})
@@ -44,6 +45,7 @@ function Container() {
     return <div>
         <InitialContainer handleContainers={handleContainers} visible={containerVisible.inicial.visible}/>
         <QuizContainer handleContainers={handleContainers} visible={containerVisible.quiz.visible}/>
+        <JsonGenContainer handleContainers={handleContainers} visible={containerVisible.jsonGen.visible}/>
     </div>
 }
 
@@ -52,8 +54,55 @@ function InitialContainer({ handleContainers, visible }: { handleContainers: (ty
     return visible? (<>
         <span className='title'> Que tipo de script você deseja gerar? </span>
         <p onClick={() => handleContainers('quiz')}> Perguntas e respostas! </p>
-        <p onClick={() => {}}> JSON Eva </p>
+        <p onClick={() => handleContainers('jsonGen')}> JSON Eva </p>
     </>) : <></>;
+}
+
+
+function JsonGenContainer({ handleContainers, visible}: { handleContainers: (type: ContainerTypes) => void, visible: boolean}) {
+    
+    const handleGenerateXml = async (file: any) => {
+
+        const formData = new FormData();
+        formData.append('file', file as unknown as Blob, (file as any).name)
+        const url = '/api/create-json-file';
+        const { data } = await axios.post(url, formData);
+
+        downloadFile('application/json', data, (file as any).name)
+    } 
+    
+    return visible ? <>
+        <div className='actions'>
+            <div className={`action-container open`}>
+                <FileContainer  acceptedType='.xml' onClick={handleGenerateXml}/>
+            </div>
+        </div>
+    </> : null;
+}
+
+
+const FileContainer = ({ acceptedType = '.xlsx', onClick }: {acceptedType?: string, onClick?: (file: any) => void}) => {
+
+    const [file, setFile] = useState<Blob | undefined>(undefined);
+
+    const handleChangeFile = (v: any) => {
+        const file = (v?.target?.files as unknown as [any])[0]
+        setFile(file)
+    }
+
+    return <div className='sheet-container'>
+        <div className='upload-container'>
+            <label htmlFor='sheet-upload'> Selecione o arquivo </label>
+            <input id='sheet-upload' type='file' accept={acceptedType} onChange={handleChangeFile} onClick={(ev) => {
+                (ev.target as any).value = ''
+            }} />
+        </div>
+
+        <div>
+            <button className='rollback' onClick={() => setFile(undefined)}> Limpar </button>
+            <button className='primary' onClick={onClick? () => onClick(file): () => {}} disabled={file === undefined}> Gerar Evaml {file ? `(${(file as any).name})` : ''} </button>
+        </div>
+    </div>
 }
 
 
@@ -152,30 +201,6 @@ function QuizContainer({ visible, handleContainers }: { visible: boolean, handle
         </div> : <div className='manual-container'><DisplayQuestions quiz={quiz} /></div>
     }
 
-    const SheetContainer = () => {
-
-        const [file, setFile] = useState<Blob | undefined>(undefined);
-
-        const handleChangeFile = (v: any) => {
-            const file = (v?.target?.files as unknown as [any])[0]
-            setFile(file)
-        }
-
-        return <div className='sheet-container'>
-            <div className='upload-container'>
-                <label htmlFor='sheet-upload'> Selecione o arquivo </label>
-                <input id='sheet-upload' type='file' accept='.xlsx' onChange={handleChangeFile} onClick={(ev) => {
-                    (ev.target as any).value = ''
-                }} />
-            </div>
-
-            <div>
-                <button className='rollback' onClick={() => setFile(undefined)}> Limpar </button>
-                <button className='primary' disabled={file === undefined}> Gerar Evaml {file? `(${(file as any).name})` : ''} </button>
-            </div>
-        </div>
-    }
-
     const ManualContainer = () => {
 
         const [quiz, setQuiz] = useState<Quiz | {}>({})
@@ -239,7 +264,7 @@ function QuizContainer({ visible, handleContainers }: { visible: boolean, handle
                 A partir de um planilha (Consulte o modelo)
             </button>
             <div className={`action-container ${mode === 'sheet' ? 'open' : ''}`}>
-                <SheetContainer/>
+                <FileContainer/>
             </div>
             <button onClick={() => setMode('manual')}>
                 Adicionar perguntas e respostas manualmente
