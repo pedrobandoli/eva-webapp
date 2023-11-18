@@ -20,176 +20,330 @@ body {
     font-size: 40px;
     font-weight: bold;
     display: flex;
-    height: 100%;
+    height: calc(100% - 300px);
     justify-content: center;
-    margin-top: 200px;
+    margin-top: 100px;
 
-    & .opcoes-container {
 
-        align-self: flex-start;
-        justify-content: center;
+    & div {
+        display: flex;
+        flex-direction: column;
+        width: 690px;
+    }
 
-        & .opcoes {
-            & p {
-                font-size: 30px;
+    & p {
+        font-size: 30px;
+        font-weight: 500;
+        padding-left: 30px;
+        margin-top: 15px;
+        margin-bottom: 0px;
+        cursor: pointer;
+        color: lightcyan;
+        font-family: 'Roboto', serif;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+}
+
+
+& span.title {
+    color: white;
+    padding: 5px;
+    font-family: 'Roslindale';
+    font-weight: lighter;
+    text-align: center;
+
+}
+
+div.actions {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+
+    & .action-container {
+        height: 0;
+        background-color: white;
+        border-radius: 16px;
+        transition: height 0.5s ease;
+        width: 424px;
+        align-self: center;
+        display: none;
+
+        &.open {
+            padding:12px;
+            height: 300px;
+            display: block !important;
+            height: fit-content;
+        }
+    }
+
+}
+
+div.text-container {
+
+    width: inherit;
+    height: inherit;
+    justify-content: space-between;
+    
+    & textarea {
+        width: calc(100% - 9px);
+        height: 50px;
+        max-width: calc(100% - 9px);
+        min-height: 50px;
+        max-height: 300px;
+    }
+
+
+    & >div {
+       margin-top: 16px;
+       align-self: center; 
+       width: inherit;
+       display: flex;
+       flex-direction: row;
+       gap: 8px;
+
+
+        & button {
+            width: 100%;
+        }
+    }
+}
+
+div.manual-container {
+        width: inherit;
+    
+        &>div {
+            margin-top: 16px;
+            align-self: center;
+            width: inherit;
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+
+
+            & button {
+                width: 100%;
+            }
+        }
+
+        & .select-amount {
+            width: inherit;
+            display: flex;
+            flex-direction: column;
+
+            & span {
+                font-size: 16px;
+            }
+        }
+
+        & .create-quiz {
+            width: inherit;
+            display: flex;
+            flex-direction: column;
+
+            & span {
+                font-size: 24px;
+                text-align: center;
+            }
+
+            & div {
+                width: inherit;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+
+                & span {
+                    font-size: 16px;
+                }
+            }
+        }
+
+
+        & .qa-container {
+            display: flex;
+            flex-direction: column;
+            border-color: whitesmoke;
+            background-color: cornflowerblue;
+            border-radius: 4px;
+            padding: 2px;
+            color: white;
+
+            &:hover {
+                background-color: cornflowerblue;
+                opacity: 0.8;
+            }
+            
+            & span.qa-id {
+                align-self: center;
+                font-size: 24px;
                 font-weight: 500;
-                padding-left: 30px;
-                margin-top: 15px;
-                margin-bottom: 0px;
-                cursor: pointer;
-                color: lightcyan;
-                font-family: 'Roboto', serif;
+                font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
-                &:hover {
+                & a {
+                    cursor: pointer;
+                    margin-left: 8px;
+
+                    &:hover {
                     text-decoration: underline;
+                    }
                 }
             }
 
+            & div.qa-description {
+                width: inherit;
+                display: flex;
+                flex-direction: column;
+                text-align: center;
+                gap: 2px;
+                
+                & span.question {
+                    text-align: center;
+                    font-size: 20px;
+                    font-weight: 400;
+                }
+
+                & span.pre-answer {
+                    font-size: 22px;
+                    color: turquoise;
+                }
+
+                & span.answer {
+                    font-size: 20px;
+                    color: white;
+                }
+
+                & div.buttons {
+                    margin-top: 12px;
+                    width: 80%;
+                    display: flex;
+                    flex-direction: column;
+                    align-self: center;
+                    padding-bottom: 8px;
+                    gap: 8px
+                }
+
+                & div.new-qa {
+                    width: inherit;
+                    display: flex;
+                    flex-direction: row;
+                    padding-left: 8px;
+
+                    & span {
+                        font-size: 16px;
+                        width: 125px;
+                    }
+
+                    & input {
+                        margin-left: 5px;
+                        width: 64%;
+                    }
+                }
+            }
         }
-
-        & span {
-            color: white;
-            padding: 5px;
-            font-family: 'Roslindale';
-            font-weight: bolder;
-            background-color: rgb(121, 117, 117);
-        }
-
-    }
-
-
 
 }
 
-/* 
-button {
-    margin-top: 8px;
-    width: inherit !important;
-    align-self: center;
-    padding: 16px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 500;
 
-    &:disabled {
-        border: none;
+div.sheet-container {
+    width: inherit;
+
+    &>div {
+            margin-top: 16px;
+            align-self: center;
+            width: inherit;
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+    
+    
+            & button {
+                width: 100%;
+            }
+        }
+
+
+    & .upload-container {
+        display: flex;
+        flex-direction: row;
+        width: inherit;
+        align-items: center;
+        justify-content: center;
+        color: rgb(4, 4, 4);
+        font-size: 16px;
+
+        & label {
+            width: 70%;
+            text-align: center;
+            font-size: 16px;
+            padding: 8px;
+            background-color: rgba(0, 0, 0, 0.1);
+            color: rgb(10, 2, 2);
+            cursor: pointer;
+            font-weight: lighter;
+            border: 2px dotted rgba(0, 0, 0);
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        & input {
+            display: none;
+        }
     }
+
+
+    
+}
+
+
+button {
+    width: 450px;
+    align-content: center;
+    align-self: center;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid lightcyan;
+    background-color: rgb(128, 128, 128, 0.2);
+    color: white;
+    font-weight: 400;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    cursor: pointer;
 
     &:hover {
-        background-color: green;
-        color: white;
-        border: none;
-        cursor: pointer;
+        background-color: lightblue;
     }
 
+
+    &.rollback {
+        background-color: rgba(60, 195, 253, 0.7);
+        border-color: lightblue;
+
+        &:hover {
+            background-color: lightblue;
+        }
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    &.primary {
+        background-color: rgb(134, 229, 134);
+        color: snow;
+
+        &:hover {
+            background-color: rgb(80, 212, 80);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
 
 }
-
-
-header {
-    background-color: black;
-    position: absolute;
-    width: 100%;
-    padding: 8px 0;
-    display: flex;
-    justify-content: center;
-    top: 0;
-    left: 0;
-    border-bottom: 7px solid grey;
-
-    & svg{
-        height: 125px;
-        width: 200px;
-    }
-}
-
-
-div.container {
-    background-color: black;
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-
-    & div.main-questionary-display {
-        display: flex;
-        flex-direction: column;
-    }
-
-    & div.questionary-display {
-        background-color: blueviolet;
-        width: 50%;
-        align-self: center;
-        text-align: justify;
-        color: white;
-        font-weight: 500;
-        border-radius: 16px;
-        padding: 24px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-
-        & >div {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            cursor: pointer;
-
-            &:hover {
-                background-color: violet;
-            }
-        }
-    }
-
-
-    & div.quiz-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-
-        & span {
-            color: white;
-            font-weight: bolder;
-        }
-
-        & input {
-            width: 50%;
-            padding: 6px;
-            border-radius: 8px;
-        }
-    }
-
-    & div.create-quiz {
-        width: 50%;
-        display: flex;
-        justify-content: flex-start;
-        background: grey;
-        flex-direction: column;
-        gap: 12px;
-
-        & .game-form {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            gap: 6px;
-            padding: 0 12px;
-            width: 50%;
-            align-self: center;
-
-            & select {
-                padding: 6px;
-            }
-
-            & select option:disabled {
-                color: grey;
-            }
-
-            & input {
-                padding: 6px;
-            }
-        }
-    }
-
-   
-} */

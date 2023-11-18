@@ -1,7 +1,7 @@
 import './homepage.css';
 import './header.css';
 import robot from '../../assets/robot.svg';
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, ReactElement, useEffect, useState } from 'react';
 import axios from 'axios';
 import { downloadFile } from '../../utils/b64decoder';
 import { createQuizXML } from '../../utils/quizTemplate';
@@ -19,191 +19,220 @@ function Header(): any {
 }
 
 
-function Quiz({ quantidade }: any) {
+interface QA {
+    question: string;
+    answer: string;
+}
 
-    const [state, setState] = useState({
-        currentQuestion: undefined,
-        currentAnswer: undefined,
-        qid: 1,
-        questionario: {},
-        filled: false,
-    })
 
-    useEffect(() => {
-        console.log(state.questionario)}, [state])
+type ContainerTypes = 'inicial' | 'quiz';
+type Quiz = { idAnswer: QA }
 
-    const addToQuestionary = () => {
-        setState({...state, currentAnswer: undefined, currentQuestion: undefined, qid: state.qid + 1, 
-            questionario: {...state.questionario, [`pergunta${state.qid}`]: {[state.currentQuestion as unknown as string]: state.currentAnswer}},
-            filled: Object.keys(state.questionario).length + 1 === quantidade,
-        })
+function Container() {
+
+    const initialState = {
+        inicial: { visible: false},
+        quiz: {visible: false}
     }
 
-    function QuestionaryDisplay() {
-        const [changeKey, setChangeKey] = useState<string|undefined>(undefined);
-        const [newAnswer, setNewAnswer] = useState();
-        const [newQuestion, setNewQuestion] = useState();
+    const [containerVisible, setContainerVisible] = useState<any>({...initialState, inicial: { visible: true}})
 
-        const downloadXml = async () => {
-            const { questionario } = state;
-            const xml = createQuizXML(questionario);
-            const { data } = await axios.post('/api/create-xml', xml, {
-                headers: { 'Content-Type': 'application/xml' },
-              });
-            downloadFile('application/xml', data, 'generated_quiz.xml')
+    const handleContainers = (type: ContainerTypes) => {
+        setContainerVisible({...initialState, [type]: { visible: true}})
+    }
+    
+    return <div>
+        <InitialContainer handleContainers={handleContainers} visible={containerVisible.inicial.visible}/>
+        <QuizContainer handleContainers={handleContainers} visible={containerVisible.quiz.visible}/>
+    </div>
+}
+
+
+function InitialContainer({ handleContainers, visible }: { handleContainers: (type: ContainerTypes) => void, visible: boolean}){
+    return visible? (<>
+        <span className='title'> Que tipo de script você deseja gerar? </span>
+        <p onClick={() => handleContainers('quiz')}> Perguntas e respostas! </p>
+        <p onClick={() => {}}> JSON Eva </p>
+    </>) : <></>;
+}
+
+
+function QuizContainer({ visible, handleContainers }: { visible: boolean, handleContainers: (type: ContainerTypes) => void }) {
+
+    const [mode, setMode] = useState<'text' | 'sheet' | 'manual' | undefined>(undefined);
+    
+    const TextContainer = () => {
+
+        const [text, setText] = useState('')
+        const maximumSize = 2048;
+
+        return <div className='text-container'>
+            <textarea value={text} onChange={(v) => setText(v.target.value)}/>
+            <div>
+                <button className='rollback' onClick={() => setText('')}> Limpar </button>
+                <button className='primary' disabled={text === undefined || text === ''}> Gerar Evaml </button>
+            </div>
+        </div>
+    }
+
+    const SheetContainer = () => {
+
+        const [file, setFile] = useState<Blob | undefined>(undefined);
+
+        const handleChangeFile = (v: any) => {
+            const file = (v?.target?.files as unknown as [any])[0]
+            setFile(file)
         }
 
-        return <div className='main-questionary-display'>
-            <div className='questionary-display'>{
-            Object.entries(state.questionario).map(([idPergunta, qa], index) => {
-            return Object.entries(qa as any).map(([pergunta, resposta]) => {
-                return <div key={index}>
-                <div className='question' onClick={() => setChangeKey(idPergunta)}>
-                    <span> Pergunta {index + 1}:</span> 
-                    {changeKey === idPergunta? 
-                        <input placeholder={pergunta} value={newQuestion || ''} onChange={(e) => setNewQuestion(e.target.value as any)}/>
-                        : <span> {pergunta}</span>}
-                </div>
-                <div className='question'>
-                <span> Resposta: </span> {changeKey === idPergunta? 
-                        <input value={newAnswer || ''} placeholder={resposta as string} onChange={(e) => setNewAnswer(e.target.value as any)}/>
-                        : <span> {resposta as string}</span>}
-                </div>
-                {changeKey && changeKey===idPergunta? <button disabled={!newAnswer && !newQuestion} onClick={() => {
-                    const question = newQuestion || pergunta;
-                    const answer = newAnswer || resposta;
-                    
-                    const novoQuestionario = {...state.questionario, [idPergunta]: {[question as unknown as string]: answer}}
-
-                    setState({...state, questionario: {...novoQuestionario}})}
-                
-                }>OK!</button>: null}
+        return <div className='sheet-container'>
+            <div className='upload-container'>
+                <label htmlFor='sheet-upload'> Selecione o arquivo </label>
+                <input id='sheet-upload' type='file' accept='.xlsx' onChange={handleChangeFile} onClick={(ev) => {
+                    (ev.target as any).value = ''
+                }} />
             </div>
+
+            <div>
+                <button className='rollback' onClick={() => setFile(undefined)}> Limpar </button>
+                <button className='primary' disabled={file === undefined}> Gerar Evaml {file? `(${(file as any).name})` : ''} </button>
+            </div>
+        </div>
+    }
+
+    const ManualContainer = () => {
+
+        const [quiz, setQuiz] = useState<Quiz | {}>({})
+        const [amount, setAmount] = useState(1);
+        const [creatingQuiz, setCreatingQuiz] = useState(false);
+        const values = new Array(100).fill('_').map((_, i) => i+1)
+
+        const SelectAmount = () => {
+            return <div className='select-amount'>
+                <span> Primeiro, selecione a quantidade de perguntas desejada. </span>
+                <select onChange={(v) => setAmount(parseInt(v.target.value))} value={amount}>
+                    {values.map((v) => <option key={`_${v}`} value={v}>{v}</option>)}
+                </select>   
+                <button className='primary' onClick={() => setCreatingQuiz(true)}>Confirmar</button>             
+            </div>
+        }
+
+        const DisplayQuestions = ({ quiz }: { quiz: any}) => {
+
+            const [quizCpy, setQuizCpy] = useState({...quiz});
+            const [editingQuestion, setEditingQuestion] = useState<undefined | number>();
+            const [updatedQA, setUpdatedQA] = useState<{question: string, answer: string}>({
+                question: '',
+                answer: '',
             })
-        })}
-        </div>
-        <button onClick={() => downloadXml()}>Gerar script EvaML</button>
-        </div>
-    }
+
+            const handleUpdateQuiz = () => {
+                const id = editingQuestion as number;
+                quizCpy[id] = {question: updatedQA.question || quiz[id].question, answer: updatedQA.answer || quiz[id].answer}
+                setUpdatedQA({ question: '', answer: ''})
+                setQuizCpy({...quizCpy})
+                setEditingQuestion(undefined);
+            }
 
 
-    return <div className='create-quiz'>
-        {!state.filled? (<div className='quiz-container'>
-        <span> Pergunta {state.qid} de {quantidade}</span>
-        <input value={state.currentQuestion || ''} 
-            placeholder='Qual a pergunta?'
-            onChange={(e) => setState({...state, currentQuestion: e.target.value as any})}/>
-        <input value={state.currentAnswer || ''} 
-            placeholder='Qual a resposta?'
-            onChange={(e) => setState({...state, currentAnswer: e.target.value as any})}/>
-        <button
-            onClick={() => addToQuestionary()} 
-            disabled={!state.currentAnswer || !state.currentQuestion}>
-            Confirmar e ir para a próxima!
-        </button>
-    </div>): <QuestionaryDisplay/>}
-    </div>
-}
-
-function Body() {
-
-    const [state, setState] = useState<
-        { tema?: 'historia'| 'geografia' | 'quimica' | 'fisica',
-          nivel?: 'fundamental' | 'medio',
-          quantidade: number | null}>({
-        tema: undefined,
-        nivel: undefined,
-        quantidade: null,
-    })
-
-    const [quiz, setQuiz] = useState(false);
-
-
-    const handleAmountChange  = (event: any) => {
-        const inputValue = event.target.value;
-    
-        if (/^[1-9]\d*$/.test(inputValue)) {
-            setState({...state, quantidade: parseInt(event.target.value)})
-        } else if (!inputValue) setState({...state, quantidade: null})
-    }
-
-    return <div className='container'>
-        {!quiz? <div className='create-quiz'>
-            <div className='game-form'>
-
-                <select onChange={(e) => setState({...state, tema: e.target.value as any})}
-                        value={state.tema || ''}
-                    >
-                    <option value='' disabled hidden> Escolha o tema </option>
-                    <option value='historia'> História </option>
-                    <option value='geografia'> Geografia </option>
-                    <option value='matematica'> Matemática </option>
-
-                </select>
-
-                <select 
-                    onChange={(e) => setState({...state, nivel: e.target.value as any})}
-                    value={state.nivel || ''}
-                    >
-                    <option value='' disabled hidden> Escolha o nível da turma</option>
-                    <option value='fundamental'> Fundamental </option>
-                    <option value='médio'> Médio </option>
-                </select>
-                <input placeholder='Insira o número de perguntas'
-                    value={state.quantidade || ''}
-                    onChange={(e) => handleAmountChange(e)}/>
+            return <>{Object.entries(quizCpy).map(([id, qa]) => 
+                <div className='qa-container'>
+                    <span className='qa-id'> Pergunta {id + 1} | <a onClick={() => setEditingQuestion(parseInt(id))}> Alterar</a> </span>
+                    <div className='qa-description'>
+                        {!(editingQuestion as number === parseInt(id)) ? (<><span className='question'> {(qa as any).question}</span>
+                        <span className='pre-answer'>
+                            R: <span className='answer'> {(qa as any).answer} </span>
+                            </span></>): <>
+                                <div className='new-qa'>
+                                    <span> Nova pergunta: </span>
+                                    <input value={updatedQA?.question} placeholder={(qa as any).question} onChange={(v) => setUpdatedQA({...updatedQA, question: v.target.value})}/>
+                                </div>
+                                <div className='new-qa'>
+                                    <span> Nova resposta: </span>
+                                    <input value={updatedQA?.answer} placeholder={(qa as any).answer} onChange={(v) => setUpdatedQA({...updatedQA, answer: v.target.value})}/>
+                                </div>
+                                <div className='buttons'>
+                                    <button className='primary' onClick={handleUpdateQuiz}> Ok </button>
+                                    <button className='rollback'> Limpar </button>
+                                </div>
+                            </>
+        }
+                    </div>
+                </div>
+            )}
+            <div className='submit-button'>
+                <button className='primary' onClick={() => console.log(quizCpy)}>
+                    Gerar XML!
+                </button>
             </div>
-            <button onClick={() => setQuiz(true)} disabled={!state.quantidade}>
-                Gerar Quiz
-            </button>
-           <FileUpload type='xml'/>
-           <FileUpload type='json'/>
-           <FileUpload type='xml' type_to='json'/>
-        </div>: <Quiz quantidade={state.quantidade}/>}
-    </div>
-}
+            </>
+        }
 
-function FileUpload({type, type_to}: {type: 'xml'|'json', type_to?: 'xml' | 'json'}){
 
-    const [file, setFile] = useState();
-    const [correctType, setCorrectType] = useState(false);
+        const CreateQuiz = ({ amount }: {amount : number}) => {
+            const [tempQuiz, setTempQuiz] = useState<Quiz | {}>({});
+            const [index, setIndex] = useState(0);
+            const [currentAnswer, setCurrentAnswer] = useState<undefined | string>(undefined);
+            const [currentQuestion, setCurrentQuestion] = useState<undefined | string>(undefined);
 
-    const uploadFile = async () => {
-        
-        const formData = new FormData();
-        formData.append('file', file as unknown as Blob, (file as any).name)
-        const url = type_to && type_to === 'json'? '/api/create-json-file': '/api/create-xml';
-        const { data } = await axios.post(url, formData);
+            const handleClickNext = () => {
+                setTempQuiz({...tempQuiz, [index]: {question: currentQuestion, answer: currentAnswer}})
+                setCurrentQuestion(undefined);
+                setCurrentAnswer(undefined);
+                setIndex((prev) => prev + 1)
+            }
+             
+            useEffect(() => {
+                console.log(quiz, amount, Object.keys(tempQuiz).length);
+                console.log(amount === Object.keys(tempQuiz).length)
+            }, [tempQuiz, amount])
 
-        downloadFile(type_to === 'json'? 'application/json': 'application/xml', data, (file as any).name)
-    }
+            return !(amount === Object.keys(tempQuiz).length) ? (<div className='create-quiz'>
+                <span> Pergunta nº {index + 1} / {amount}</span>
+                <div>
+                    <input value={currentQuestion || ''} placeholder='Insira a pergunta' onChange={(v) => setCurrentQuestion(v.target.value)}/>
+                    <input value={currentAnswer || ''} placeholder='Insira a resposta' onChange={(v) => setCurrentAnswer(v.target.value)}/>
+                </div>
+                <button className='primary' onClick={handleClickNext} disabled={!currentAnswer || !currentQuestion}> Próxima </button>
+            </div>): <DisplayQuestions quiz={tempQuiz}/>
+        }
 
-    const handleChangeFile = (event: any) => {
-        const file = event.target.files[0];
-        setFile(file)
-        setCorrectType((file as any).name.split('.')[1] === type)
-    }
-
-    return <div>
-            <input type='file' onChange={(e) => handleChangeFile(e)}/>
-            <button onClick={() => uploadFile()} disabled={!correctType}> {type.toUpperCase()} -{'>'} {type_to?.toUpperCase() || 'EVAML'} </button>
+        return <div className='manual-container'>
+            {!creatingQuiz? <SelectAmount/>: <CreateQuiz amount={amount}/>}
         </div>
+    }
+
+    return visible? <>
+        <span className='title'> Como você deseja gerar? </span>
+        <div className='actions'>
+            <button onClick={() => setMode('text')}>
+                A partir de um texto
+            </button>
+            <div className={`action-container ${mode === 'text'? 'open': ''}`}>
+                <TextContainer/>
+            </div>
+            <button onClick={() => setMode('sheet')}>
+                A partir de um planilha (Consulte o modelo)
+            </button>
+            <div className={`action-container ${mode === 'sheet' ? 'open' : ''}`}>
+                <SheetContainer/>
+            </div>
+            <button onClick={() => setMode('manual')}>
+                Adicionar perguntas e respostas manualmente
+            </button>
+            <div className={`action-container ${mode === 'manual' ? 'open' : ''}`}>
+                <ManualContainer/>
+            </div>
+        </div>
+       </>: null;
+       
 
 }
-
 
 export default function Homepage(): any {
     return (<div> 
         <Header/>
         <div className='homepage-body'>
-            <div className='opcoes-container'>
-                <span className='title'> Que tipo de script você deseja gerar? </span>
-                <div className='opcoes'>
-                    <p> Jogo sério (Quiz) </p>
-                    <p> JSON (A partir de um script EvaML) </p>
-                </div>
-            </div>
-
+            <Container/>
         </div>
     </div>)
 }
