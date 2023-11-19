@@ -6,7 +6,7 @@ import axios from 'axios';
 import { downloadFile } from '../../utils/b64decoder';
 import { createQuizXML } from '../../utils/quizTemplate';
 
-const URL = "https://pedrobandoli.pythonanywhere.com/";
+const URL = "https://pedrobandoli.pythonanywhere.com";
 
 function Header(): any {
     return <div className='custom-header'>
