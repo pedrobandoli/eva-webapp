@@ -70,5 +70,38 @@ def create_json_script():
 def create_quiz_from_text():
     data = request.get_json()
     amount, text = data['amount'], data['text']
+
+    return {
+    "0": {
+        "Qual o período da Guerra Fria?": "1947-1991"
+    },
+    "1": {
+        "Quais eram as duas superpotências envolvidas no conflito?": "União Soviética e Estados Unidos"
+    },
+    "2": {
+        "O que significa o termo 'corta' em Guerra Fria?": "Não houve combates em larga escala"
+    },
+    "3": {
+        "O que eram as guerras por procuração?": "Conflitos regionais apoiados pelas superpotências"
+    },
+    "4": {
+        "Além da luta ideológica, como a disputa foi expressa?": "Por meio de guerra psicológica, propaganda, espionagem, embargos econômicos, eventos esportivos e competições tecnológicas"
+    },
+    "5": {
+        "O que a doutrina da destruição mutuamente assegurada desencorajou?": "Ataque nuclear preventivo"
+    },
+    "6": {
+        "Quais ferramentas de disputa não foram mencionadas no texto?": "Não mencionadas"
+    },
+    "7": {
+        "Quem venceu a Segunda Guerra Mundial?": "Aliança temporária entre União Soviética e Estados Unidos"
+    },
+    "8": {
+        "Qual foi um dos aspectos importantes do conflito durante a Guerra Fria?": "Desenvolvimento do arsenal nuclear"
+    },
+    "9": {
+        "Por que o termo 'corta' é utilizado para descrever a Guerra Fria?": "Porque não houve combates em larga escala"
+    }
+}
     quiz = create_quiz(text, amount)
     return json.loads(quiz)
