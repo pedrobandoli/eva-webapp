@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/eva-robot/static/css/main.6f7b89a3.css",
-    "main.js": "/eva-robot/static/js/main.ada484e5.js",
-    "static/js/787.197b230a.chunk.js": "/eva-robot/static/js/787.197b230a.chunk.js",
-    "static/media/Roslindale Text Italic.ttf": "/eva-robot/static/media/Roslindale Text Italic.bdeb2a0138373da09d5e.ttf",
-    "static/media/robot.svg": "/eva-robot/static/media/robot.5cc697073915f5888140ee66c8014a33.svg",
-    "index.html": "/eva-robot/index.html",
-    "main.6f7b89a3.css.map": "/eva-robot/static/css/main.6f7b89a3.css.map",
-    "main.ada484e5.js.map": "/eva-robot/static/js/main.ada484e5.js.map",
-    "787.197b230a.chunk.js.map": "/eva-robot/static/js/787.197b230a.chunk.js.map"
+    "main.css": "/eva-webapp/static/css/main.9d7fc8d1.css",
+    "main.js": "/eva-webapp/static/js/main.c2aecd6a.js",
+    "static/js/787.197b230a.chunk.js": "/eva-webapp/static/js/787.197b230a.chunk.js",
+    "static/media/Roslindale Text Italic.ttf": "/eva-webapp/static/media/Roslindale Text Italic.bdeb2a0138373da09d5e.ttf",
+    "static/media/robot.svg": "/eva-webapp/static/media/robot.5cc697073915f5888140ee66c8014a33.svg",
+    "index.html": "/eva-webapp/index.html",
+    "main.9d7fc8d1.css.map": "/eva-webapp/static/css/main.9d7fc8d1.css.map",
+    "main.c2aecd6a.js.map": "/eva-webapp/static/js/main.c2aecd6a.js.map",
+    "787.197b230a.chunk.js.map": "/eva-webapp/static/js/787.197b230a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.6f7b89a3.css",
-    "static/js/main.ada484e5.js"
+    "static/css/main.9d7fc8d1.css",
+    "static/js/main.c2aecd6a.js"
   ]
 }
