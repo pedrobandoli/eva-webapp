@@ -6,6 +6,8 @@ import axios from 'axios';
 import { downloadFile } from '../../utils/b64decoder';
 import { createQuizXML } from '../../utils/quizTemplate';
 
+const URL = "https://pedrobandoli.pythonanywhere.com/";
+
 function Header(): any {
     return <div className='custom-header'>
         <div className='logo'>
@@ -65,7 +67,7 @@ function JsonGenContainer({ handleContainers, visible}: { handleContainers: (typ
 
         const formData = new FormData();
         formData.append('file', file as unknown as Blob, (file as any).name)
-        const url = '/api/create-json-file';
+        const url = `${URL}/api/create-json-file`;
         const { data } = await axios.post(url, formData);
 
         downloadFile('application/json', data, (file as any).name)
@@ -131,7 +133,7 @@ function QuizContainer({ visible, handleContainers }: { visible: boolean, handle
         const handleGenerateScript = async (quizCpy: any) => {
             const xml: string = createQuizXML(quizCpy)
             const filename = `quiz_${new Date().getTime()}`
-            const { data } = await axios.post('/api/create-xml', xml, {
+            const { data } = await axios.post(`${URL}/api/create-xml`, xml, {
                 headers: { 'Content-Type': 'application/xml' },
             });
             downloadFile('application/xml', data, filename)
@@ -178,7 +180,7 @@ function QuizContainer({ visible, handleContainers }: { visible: boolean, handle
         const maximumSize = 2048;
 
         const handleGenerateScript = async () => {
-            const { data } = await axios.post('/api/create-quiz-from-text', {
+            const { data } = await axios.post(`${URL}/api/create-quiz-from-text`, {
                 text,
                 amount: 10,
             }, {
