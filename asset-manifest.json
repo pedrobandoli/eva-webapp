@@ -1,17 +1,19 @@
 {
   "files": {
-    "main.css": "/eva-webapp/static/css/main.9d7fc8d1.css",
-    "main.js": "/eva-webapp/static/js/main.8469739d.js",
+    "main.css": "/eva-webapp/static/css/main.babce0ee.css",
+    "main.js": "/eva-webapp/static/js/main.2a4935fd.js",
     "static/js/787.197b230a.chunk.js": "/eva-webapp/static/js/787.197b230a.chunk.js",
-    "static/media/Roslindale Text Italic.ttf": "/eva-webapp/static/media/Roslindale Text Italic.bdeb2a0138373da09d5e.ttf",
+    "static/media/source-sans-pro.regular.ttf": "/eva-webapp/static/media/source-sans-pro.regular.358e8828cd2fc97c7e74.ttf",
     "static/media/robot.svg": "/eva-webapp/static/media/robot.5cc697073915f5888140ee66c8014a33.svg",
+    "static/media/Create.svg": "/eva-webapp/static/media/Create.3b947fb9c3294e694d845d18da53b045.svg",
     "index.html": "/eva-webapp/index.html",
-    "main.9d7fc8d1.css.map": "/eva-webapp/static/css/main.9d7fc8d1.css.map",
-    "main.8469739d.js.map": "/eva-webapp/static/js/main.8469739d.js.map",
+    "static/media/Vector.svg": "/eva-webapp/static/media/Vector.621e9e7956175e4a7a4cb32d9d6344d5.svg",
+    "main.babce0ee.css.map": "/eva-webapp/static/css/main.babce0ee.css.map",
+    "main.2a4935fd.js.map": "/eva-webapp/static/js/main.2a4935fd.js.map",
     "787.197b230a.chunk.js.map": "/eva-webapp/static/js/787.197b230a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9d7fc8d1.css",
-    "static/js/main.8469739d.js"
+    "static/css/main.babce0ee.css",
+    "static/js/main.2a4935fd.js"
   ]
 }
