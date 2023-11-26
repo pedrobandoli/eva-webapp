@@ -1,5 +1,6 @@
 import base64
 from flask import Flask, request
+from flask_cors import CORS
 from domain.convert_xml_to_evaml import MacroExpander, GenerateKeys, GenerateLinks
 from domain.convert_json_to_evaml import convert_json
 from domain.create_quiz_from_text import create_quiz
@@ -10,6 +11,7 @@ import json
 
 
 app = Flask(__name__)
+CORS(app)
 
 
 def check_if_evaml(tree):
