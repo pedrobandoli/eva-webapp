@@ -1,4 +1,3 @@
-import "./homepage.css";
 import "./header.css";
 import "../../main.css";
 import robot from "../../assets/robot.svg";
@@ -17,12 +16,12 @@ const URL =
     ? "https://pedrobandoli.pythonanywhere.com"
     : "http://127.0.0.1:5000";
 
-function Header(): any {
+function Header({ handleContainers }: { handleContainers: (type: 'inicial') => void}): any {
   return (
     <div className="custom-header">
       <div className="logo">
         <img src={robot} />
-        <span> EvaScript</span>
+        <span onClick={() => handleContainers('inicial')}> EvaScript</span>
       </div>
       <div className="links">
         <span>About</span>
@@ -31,21 +30,7 @@ function Header(): any {
   );
 }
 
-function Container() {
-  const initialState = {
-    inicial: { visible: false },
-    quiz: { visible: false },
-    jsonGen: { visible: false },
-  };
-
-  const [containerVisible, setContainerVisible] = useState<any>({
-    ...initialState,
-    inicial: { visible: true },
-  });
-
-  const handleContainers = (type: ContainerTypes) => {
-    setContainerVisible({ ...initialState, [type]: { visible: true } });
-  };
+function Container({ containerVisible, handleContainers }: { containerVisible: any, handleContainers: (type: ContainerTypes) => void}) {
 
   return (
     <div>
@@ -112,13 +97,11 @@ function JsonGenContainer({
   };
 
   return visible ? (
-    <>
-      <div className="actions">
-        <div className={`action-container open`}>
-          <FileContainer acceptedType=".xml" onClick={handleGenerateXml} open={true} />
-        </div>
+    <div className="container-cs">
+      <div className="json-gen-wrapper">
+        <FileContainer acceptedType=".xml" onClick={handleGenerateXml} open={true} />
       </div>
-    </>
+    </div>
   ) : null;
 }
 
@@ -180,9 +163,7 @@ function QuizContainer({
 }) {
   const [mode, setMode] = useState<"text" | "sheet" | "manual" | undefined>(
     undefined
-  );
-
-  
+  );  
 
   const TextContainer = ({ open }: { open: boolean }) => {
     const [text, setText] = useState("");
@@ -264,11 +245,26 @@ function QuizContainer({
 }
 
 export default function Homepage(): any {
+  const initialState = {
+    inicial: { visible: false },
+    quiz: { visible: false },
+    jsonGen: { visible: false },
+  };
+
+  const [containerVisible, setContainerVisible] = useState<any>({
+    ...initialState,
+    inicial: { visible: true },
+  });
+
+  const handleContainers = (type: ContainerTypes) => {
+    setContainerVisible({ ...initialState, [type]: { visible: true } });
+  };
+
   return (
     <div>
-      <Header />
-      <div className="homepage-body">
-        <Container />
+      <Header handleContainers={handleContainers}/>
+      <div className="container-cs-wrapper">
+        <Container containerVisible={containerVisible} handleContainers={handleContainers} />
       </div>
     </div>
   );

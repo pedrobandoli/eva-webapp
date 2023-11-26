@@ -11,6 +11,14 @@ body {
   background: linear-gradient(to left, #2d96c5 0%, #4a90d6 100%);
 }
 
+div.container-cs-wrapper {
+  font-weight: bold;
+  display: flex;
+  height: calc(100% - 300px);
+  justify-content: center;
+  margin-top: 100px;
+}
+
 div.container-cs {
   transform: scale(1.2);
   border-radius: 10px;
@@ -18,7 +26,6 @@ div.container-cs {
   padding: 10px 16px 16px 16px;
   display: flex;
   gap: 10px;
-  display: flex;
   flex-direction: column;
 
   & span {
@@ -26,6 +33,10 @@ div.container-cs {
     font-size: 15px;
     font-weight: 400;
     text-align: left;
+  }
+
+  & >span {
+    align-self: left;
   }
 }
 
@@ -327,4 +338,15 @@ div.button-column {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+
+div.json-gen-wrapper {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 6px 12px 6px 8px;
+  height: fit-content;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
 }
